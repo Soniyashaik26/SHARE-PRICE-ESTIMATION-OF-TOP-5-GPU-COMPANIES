@@ -1,0 +1,126 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/style.css">
+    <title>GPU Share Price Estimation</title>
+</head>
+<body>
+    <script>
+        document.getElementById("predictionForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent the default form submission
+    
+            // Collect form data
+            const low = document.getElementById("Low").value;
+            const high = document.getElementById("High").value;
+            const volume = document.getElementById("Volume").value;
+            const openVal = document.getElementById("Open").value;
+            const year = document.getElementById("Year").value;
+            const month = document.getElementById("Month").value;
+            const day = document.getElementById("Day").value;
+            const company = document.getElementById("Company").value;
+    
+            // Create payload object
+            const payload = {
+                Low: low,
+                High: high,
+                Volume: volume,
+                Open: openVal,
+                Year: year,
+                Month: month,
+                Day: day,
+                Company: company
+            };
+    
+            // Make a POST request to the Flask backend
+            fetch("/predict", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.text())
+            .then(data => {
+                // Update the prediction result div with the response from the server
+                document.getElementById("predictionResult").innerHTML = `<h1><b>Prediction result: ${data}</b></h1>`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+    
+    <py-script src="app.py"></py-script>
+
+    <div class="content" id="home" style="background-image: url('https://media.istockphoto.com/id/1273484733/photo/abstract-futuristic-speed-blurred-motion-background-led-light-blue-red-neon-striped-pattern.jpg?s=612x612&w=0&k=20&c=VryroonvZ9VEr-3ycQHR5rrFwRSzYauTVoprhca3ttE=');">
+        <h1><b>SHARE PRICE PREDICTION OF TOP 5 GPU COMPANIES</b></h1>
+    </div>
+
+    <div class="content" id="prediction">
+        <h1>Prediction</h1>
+        <p>Enter your values to get the share price estimation!</p>
+
+        <form id="predictionForm" method="post" action="/predict">
+            <label for="Low">Low (Integer):</label>
+            <input type="number" id="Low" name="Low" required>
+
+            <label for="High">High (Integer):</label>
+            <input type="number" id="High" name="High" required>
+
+            <label for="Volume">Volume (Integer):</label>
+            <input type="number" id="Volume" name="Volume" required>
+
+            <label for="Open">Open (Integer):</label>
+            <input type="number" id="Open" name="Open" required>
+
+            <label for="Year">Year (Integer):</label>
+            <input type="number" id="Year" name="Year" required>
+
+            <label for="Month">Month:</label>
+            <select id="Month" name="Month" required>
+                <option value="January">January</option>
+                <option value="February">February</option>
+                <option value="March">March</option>
+                <option value="April">April</option>
+                <option value="May">May</option>
+                <option value="June">June</option>
+                <option value="July">July</option>
+                <option value="August">August</option>
+                <option value="September">September</option>
+                <option value="October">October</option>
+                <option value="November">November</option>
+                <option value="December">December</option>
+            </select>
+
+            <label for="Day">Day (Integer):</label>
+            <input type="number" id="Day" name="Day" required>
+
+            <label for="Company">Company:</label>
+            <select id="Company" name="Company" required>
+                <option value="AMD">AMD</option>
+                <option value="ASUS">ASUS</option>
+                <option value="INTEL">INTEL</option>
+                <option value="MSI">MSI</option>
+                <option value="NVIDIA">NVIDIA</option>
+            </select>
+
+            <center><button type="submit" id="submitPredictBtn"><b><center>
+                SUBMIT & PREDICT</center></b></button></center>
+        </form>
+           
+        <br>
+        <div id="predictionResult">
+            {% if prediction_result is not none %}
+                <h1><b>Prediction result: {{ prediction_result }}</b></h1>
+            {% else %}
+                <h1><b>No Prediction yet!</b></h1>
+            {% endif %}
+        </div>
+    <footer class="footer">
+        <p>Made By the Team 738312</p>
+    </footer>
+
+    <!-- <script src="../static/main.js"></script> -->
+</body>
+</html>
